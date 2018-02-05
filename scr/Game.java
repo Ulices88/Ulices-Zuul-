@@ -7,20 +7,20 @@
  *
  *  To play this game, create an instance of this class and call the "play"
  *  method.
- * 
+ *
  *  This main class creates and initialises all the others: it creates all
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
- * 
+ *
  * @author  Michael Kölling and David J. Barnes
- * 
- * 
+ *
+ *
  * @author  Ulices Cardenas
  * Date     1/16/2018
  * @version 2016.02.29
- * 
+ *
  * Edits:
- * 
+ *
  * changed the goRoom method.
  * setExits in the createRoom method.
  * created printLocationInfo method.
@@ -29,15 +29,15 @@
  * added longDescription to the printLocationInfo method.
  */
 
-public class Game 
+public class Game
 {
     private Parser parser;
     private Room currentRoom;
-        
+
     /**
      * Create the game and initialise its internal map.
      */
-    public Game() 
+    public Game()
     {
         createRooms();
         parser = new Parser();
@@ -45,14 +45,14 @@ public class Game
 
     /**
      * Exercise 8.8 setExits
-     * 
+     *
      * Create all the rooms and link their exits together.
      */
     private void createRooms()
     {
         Room graveyard, lakeside, catacombs, necroRoom,killingFields, wall,
-        ghostMountain, ghostLanding;
-      
+                ghostMountain, ghostLanding;
+
         // create the rooms
         graveyard = new Room("you are in the graveyard");
         lakeside = new Room("near the edge of the lake");
@@ -62,45 +62,55 @@ public class Game
         wall = new Room ("you are at the wall");
         ghostMountain = new Room ("climbing ghost mountain");
         ghostLanding = new Room ("you've made it to the top of the mountain!");
-        
-  
+
+        // create items in room
+
+
+        lakeside.addItem(new Item(" invisability shield","temporarilty hides you from foes. ",2));
+        catacombs.addItem(new Item(" femur bone","can be used as a weapon. ",3));
+        catacombs.addItem(new Item("pumpkin pie", "boots your ghost energy.", 0));
+        necroRoom.addItem(new Item (" holy water","wards off evil spirits. ", 2));
+        killingFields.addItem(new Item(" pumpkin juice", "renergizes you. ",1));
+        ghostLanding.addItem (new Item(" ectoplasm","an orb of energying ectoplasm that can be used against foes. ",2));
+        ghostMountain.addItem(new Item(" spirit flute", "flute for summoning ancestor ghost for guidence",3 ));
+
         // initialise room exits
         graveyard.setExits("east", lakeside);
-        
+
         lakeside.setExits("east", graveyard);
         lakeside.setExits("south", catacombs);
-        
+
         catacombs.setExits("west", lakeside);
         catacombs.setExits("east", necroRoom);
-        
+
         necroRoom.setExits("west",catacombs);
         necroRoom.setExits("south",killingFields);
-        
+
         killingFields.setExits("north",necroRoom);
         killingFields.setExits("south",wall);
-        
+
         wall.setExits("north",killingFields);
         wall.setExits("south",ghostMountain);
-        
+
         ghostMountain.setExits("north",wall);
         ghostMountain.setExits("up", ghostLanding);
-        
+
         ghostLanding.setExits("down",ghostMountain);
-        
-       
+
+
         currentRoom = graveyard;  // start game in graveyard
     }
 
     /**
      *  Main play routine.  Loops until end of play.
      */
-    public void play() 
-    {            
+    public void play()
+    {
         printWelcome();
 
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
-                
+
         boolean finished = false;
         while (! finished) {
             Command command = parser.getCommand();
@@ -125,12 +135,12 @@ public class Game
     }
 
     /** Exercise 8.14 added look command into the processCommand method.
-     * 
+     *
      * Given a command, process (that is: execute) the command.
      * @param command The command to be processed.
      * @return true If the command ends the game, false otherwise.
      */
-    private boolean processCommand(Command command) 
+    private boolean processCommand(Command command)
     {
         boolean wantToQuit = false;
 
@@ -160,15 +170,15 @@ public class Game
 
     /** Exercise 8.16
      * added showCommands method call.
-     * 
+     *
      * Exercise 8.18
      * updated so that it used the getCommandList() method call.
-     *  
+     *
      * Print out some help information.
-     * Here we print some stupid, cryptic message and a list of the 
+     * Here we print some stupid, cryptic message and a list of the
      * command words.
      */
-    private void printHelp() 
+    private void printHelp()
     {
         System.out.println("You are lost. You are alone. You wander");
         System.out.println("around the graveyard.");
@@ -179,11 +189,11 @@ public class Game
 
 
     /**  Exercise 8.6
-     *  
+     *
      * changed the method so that it is only doing one thing, going to the next room.
-     * , 
+     * ,
      **/
-    private void goRoom(Command command) 
+    private void goRoom(Command command)
     {
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
@@ -191,40 +201,41 @@ public class Game
             return;
         }
         String direction = command.getSecondWord();
-        
+
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
-        
+
         if (nextRoom == null){
-         System.out.println("there is no exit in this direction");
+            System.out.println("there is no exit in this direction");
         }
         else {
-          currentRoom = nextRoom;
-          printLocationInfo();
+            currentRoom = nextRoom;
+            printLocationInfo();
+            currentRoom.printItemList();
         }
     }
-    
-     /** 
+
+    /**
      * Exercise 8.7 create print location method
-     * 
+     *
      * Exercise 8.11 added long description method so that the room method 
      * returns a discription of the room
-     * 
-     * 
+     *
+     *
      */
     private void printLocationInfo()
     {
         System.out.println(currentRoom.getLongDescription());
-        
+
         System.out.println();
-        }
-    
-    /** 
+    }
+
+    /**
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
      * @return true, if this command quits the game, false otherwise.
      */
-    private boolean quit(Command command) 
+    private boolean quit(Command command)
     {
         if(command.hasSecondWord()) {
             System.out.println("Quit what?");
@@ -236,14 +247,14 @@ public class Game
     }
     /**
      * Exercise 8.14 added a look method.
-     * 
+     *
      */
     private void look()
     {
         System.out.println(currentRoom.getLongDescription());
-    
+
     }
-    
+
     /**
      * Exercise 8.15 added hypnosis method.
      */
@@ -251,7 +262,7 @@ public class Game
     {
         System.out.println("Enemy is fast asleep");
     }
-    
+
     /**
      * Exercise 8.15 added nightmare method.
      */
@@ -259,4 +270,11 @@ public class Game
     {
         System.out.println("foe is having a nightmare");
     }
+
+    private void throwItem()
+    {
+        System.out.println("foe turned in the direction of the thrown item");
+    }
+
+
 }
