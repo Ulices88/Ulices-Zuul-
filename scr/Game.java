@@ -72,7 +72,7 @@ public class Game
         necroRoom.addItem(new Item (" holy water","wards off evil spirits. ", 2));
         killingFields.addItem(new Item(" pumpkin juice", "renergizes you. ",1));
         ghostLanding.addItem (new Item(" ectoplasm","an orb of energying ectoplasm that can be used against foes. ",2));
-        ghostMountain.addItem(new item(" spirit flute", "flute for summoning ancestor ghost for guidence",3 ));
+        ghostMountain.addItem(new Item(" spirit flute", "flute for summoning ancestor ghost for guidence",3 ));
 
         // initialise room exits
         graveyard.setExits("east", lakeside);
